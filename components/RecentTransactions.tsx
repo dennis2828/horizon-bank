@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BankTabItem } from "./BankTabItem";
 import BankInfo from "./BankInfo";
 import TransactionsTable from "./TransactionsTable";
+import { Pagination } from "./Pagination";
 
 const RecentTransactions = ({
   accounts,
@@ -10,6 +11,16 @@ const RecentTransactions = ({
   appwriteItemId,
   page = 1,
 }: RecentTransactionsProps) => {
+  const rowsPerPage = 10;
+  const totalPage = Math.ceil(transactions.length/rowsPerPage);
+
+  
+  const indexOfLastTransactions = page*rowsPerPage;
+  const indexOfFirstTransactions = indexOfLastTransactions-rowsPerPage;
+
+  const currentTransactions = transactions.slice(indexOfFirstTransactions, indexOfLastTransactions);
+
+
   return (
     <section className="recent-transactions">
       <header className="flex items-center justify-between">
@@ -33,7 +44,8 @@ const RecentTransactions = ({
         {accounts.map((account: Account) => (
             <TabsContent value={account.appwriteItemId} key={account.id} className="space-y-4">
               <BankInfo account={account} appwriteItemId={appwriteItemId} type="full"  />
-              <TransactionsTable transactions={transactions} />
+              <TransactionsTable transactions={currentTransactions} />
+              <Pagination totalPages={totalPage} page={page} />
             </TabsContent>
         ))}
       </Tabs>
